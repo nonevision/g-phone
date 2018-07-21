@@ -40,8 +40,15 @@ function APP.Run( frame, w, h, ratio )
 		if self.last then
 			local s = w/GPhone.Ratio
 			surface.SetDrawColor(255, 255, 255)
-			surface.SetMaterial( self.last )
+			surface.SetMaterial( GPhone.GetImage( "data/"..self.last ) )
 			surface.DrawTexturedRect( 0, h/2 - s/2, w, s )
+		end
+	end
+	function photo:OnClick()
+		if !self.last then return end
+		local frame = GPhone.RunApp( "photos" )
+		if frame then
+			frame.Open( self.last, GPhone.GetImage( "data/"..self.last ) )
 		end
 	end
 	
@@ -68,9 +75,10 @@ function APP.Run( frame, w, h, ratio )
 				h = h
 			} )
 			
-			local name = game.GetMap().."_"..os.time()..".jpg"
+			local name = os.time()..".jpg"
 			file.Write("gphone/photos/"..name, data)
-			photo.last = Material("data/gphone/photos/"..name)
+			GPhone.DownloadImage( "data/gphone/photos/"..name )
+			photo.last = "gphone/photos/"..name
 		end)
 	end
 end
@@ -79,8 +87,4 @@ function APP.Focus( frame )
 	if frame.front then
 		GPhone.EnableSelfie( true )
 	end
-end
-
-function APP.Stop( frame )
-	GPhone.EnableSelfie( false )
 end
